@@ -374,7 +374,7 @@ texture_region_size = Vector2i(168, 168)
 tile_size = Vector2i(168, 168)
 sources/0 = SubResource("TileSetAtlasSource_hxc5o")
 
-[node name="Node2D" type="Node2D"]
+[node name="Board" type="Node2D"]
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("1_mwiud")
@@ -397,8 +397,61 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/separation = 20
+
+[node name="Button" type="Button" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+text = "Button"
+
+[node name="Button2" type="Button" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+text = "Button"
+
+[node name="Button3" type="Button" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+text = "Button"
+
+[node name="Button4" type="Button" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+text = "Button"
+
+[node name="Button5" type="Button" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+text = "Button"
+
+[node name="Button6" type="Button" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+text = "Button"
+
+[node name="Button7" type="Button" parent="CanvasLayer/Control/HBoxContainer"]
+layout_mode = 2
+text = "Button"
+
 [node name="TileMapLayer" type="TileMapLayer" parent="CanvasLayer"]
 position = Vector2(270, 100)
 scale = Vector2(0.5, 0.5)
 tile_map_data = PackedByteArray("AAAGAAEAAAABAAEAAAAAAAEAAAABAAEAAAAAAAIAAAABAAEAAAAEAAIAAAABAAEAAAAFAAIAAAABAAEAAAAGAAIAAAABAAEAAAAGAAMAAAABAAEAAAAFAAMAAAABAAEAAAAEAAMAAAABAAEAAAAAAAMAAAABAAEAAAABAAMAAAABAAEAAAAAAAQAAAABAAEAAAABAAQAAAABAAEAAAACAAQAAAABAAEAAAADAAQAAAABAAEAAAAEAAQAAAABAAEAAAAFAAQAAAABAAEAAAAGAAQAAAABAAEAAAAGAAUAAAABAAEAAAAFAAUAAAABAAEAAAAEAAUAAAABAAEAAAADAAUAAAABAAEAAAACAAUAAAABAAEAAAABAAUAAAABAAEAAAAAAAUAAAABAAEAAAD//wQAAAABAAEAAAD//wIAAAABAAEAAAD+/wIAAAABAAEAAAAHAAAAAAABAAEAAAD//wMAAAABAAEAAAD+/wMAAAABAAEAAAD9/wMAAAABAAEAAAAHAAEAAAABAAEAAAAIAAAAAAABAAEAAAAJAAAAAAABAAEAAAD9/wIAAAABAAEAAAD8/wMAAAABAAEAAAD7/wMAAAABAAEAAAD8/wIAAAABAAEAAAD+/wQAAAABAAEAAAD+/wUAAAABAAEAAAAHAAMAAAABAAEAAAABAAYAAAABAAEAAAACAAYAAAABAAEAAAADAAYAAAABAAEAAAAEAAYAAAABAAEAAAAFAAYAAAABAAEAAAAGAAYAAAABAAEAAAAHAAYAAAABAAEAAAAIAAUAAAABAAEAAAAHAAUAAAABAAEAAAD//wUAAAABAAEAAAD//wYAAAABAAEAAAAAAAYAAAABAAEAAAD9/wQAAAABAAEAAAD8/wQAAAABAAEAAAD7/wQAAAABAAEAAAAHAAIAAAABAAEAAAA=")
 tile_set = SubResource("TileSet_ok57s")
+
+[node name="moveDelay" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.1
+one_shot = true
+
+[connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/Button" to="GameManager" method="_on_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/Button2" to="GameManager" method="_on_button_2_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/Button3" to="GameManager" method="_on_button_3_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/Button4" to="GameManager" method="_on_button_4_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/Button5" to="GameManager" method="_on_button_5_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/Button6" to="GameManager" method="_on_button_6_pressed"]
+[connection signal="pressed" from="CanvasLayer/Control/HBoxContainer/Button7" to="GameManager" method="_on_button_7_pressed"]
+[connection signal="timeout" from="moveDelay" to="GameManager" method="_on_move_delay_timeout"]
