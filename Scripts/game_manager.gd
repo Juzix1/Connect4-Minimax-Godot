@@ -50,6 +50,7 @@ func insert_Coin(x, team):
 		if check_win_from_move(board, x, inserted_row) != 0:
 			print("Team " + str(check_win_from_move(board, x, inserted_row)) + " wins")
 			disable_all_buttons()
+			%moveDelay.queue_free()
 					
 func disable_all_buttons():
 	var hbox = $"../CanvasLayer/Control/HBoxContainer"
