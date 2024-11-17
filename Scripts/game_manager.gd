@@ -13,7 +13,14 @@ var player_team
 func _ready() -> void:
 	player_team = 1#randi_range(1,2)
 	init_Board()
+	#board =[[0,0,0,0,0,0,0],
+			#[0,0,0,0,0,0,0],
+			#[0,0,0,0,0,0,0],
+			#[0,0,0,0,1,0,0],
+			#[0,0,0,1,2,2,0],
+			#[0,0,1,2,1,1,0]]
 #	Debug the board
+	
 
 
 			
@@ -43,6 +50,7 @@ func insert_Coin(x, team):
 			else:
 				token = YELLOW_TOKEN
 			tilemap.set_cell(Vector2i(x, inserted_row), MAIN_SOURCE_ID, token)
+			debug_board()
 			break
 	
 	# Check for a win only if a valid move was made

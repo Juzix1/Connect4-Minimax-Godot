@@ -178,5 +178,5 @@ func debug_minimax_evaluation(depth, maximizing_player, move, eval, alpha, beta)
 func get_last_row(board,column):
 	for y in range(6):
 		if board[y][column] != 0:
-			return y
-		return -1
+			return y-1
+		return 5
