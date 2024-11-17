@@ -5,29 +5,6 @@ const RED_PLAYER = 1
 const YELLOW_PLAYER = 2
 const INF = 10000 #Pozytywna i negatywna nieskonczonosc
 
-#funkcja sprawdzająca wygranego na planszy -> GameMaganaer.gd
-func connectWin(board):
-	for y in range(6):
-		for x in range(7):
-			if board[y][x] != 0:
-				var player = board[y][x]
-				for direction in [
-					Vector2i(1,0), #Poziomo (w prawo)
-					Vector2i(-1,0), #Poziomo ( w lewo)
-					Vector2i(0,1), #Pionowo ( w dół)
-					Vector2i(0,-1), # Pionowo (w górę)
-					Vector2i(1,1), # Ukos (w prawo i w dół)
-					Vector2i(-1,-1), #Ukos (w lewo i w górę)
-					Vector2i(-1,1), #Ukos (w lewo i w dół)
-					Vector2i(1,-1), #Ukos (w prawo i w górę
-				]:
-					match check_direction(board,x,y, direction.x,direction.y, player):
-						true:
-							return player #Wygrany team 1 albo 2
-					
-	return 0 #brak wygranego
-
-
 #Ocena Planszy
 func evaluate_board(board):
 	var winner = check_winner(board)
@@ -69,7 +46,8 @@ func get_valid_moves(board):
 #Algorytm Minimax
 func minimax(board, depth, maximizing_player, alpha, beta):
 	if depth ==0 or check_winner(board) != 0:
-		return evaluate_board(board)
+		var smth =  evaluate_board(board)
+		return smth
 	
 	var valid_moves = get_valid_moves(board)
 	
