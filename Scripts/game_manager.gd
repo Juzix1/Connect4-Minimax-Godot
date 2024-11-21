@@ -2,6 +2,7 @@ extends Node
 
 @onready var tilemap: TileMapLayer = $"../CanvasLayer/TileMapLayer"
 @onready var ai: Node = preload("res://Scripts/SI.gd").new()
+@onready var epoch: Timer = $"../ElapsedTimer"
 
 const MAIN_SOURCE_ID = 0
 const RED_TOKEN = Vector2i(0,0)
@@ -9,26 +10,25 @@ const YELLOW_TOKEN = Vector2i(1,0)
 const EMPTY_TOKEN = Vector2i(0,1)
 var board = []
 var player_team
+var start_time
+var time_now
 
 func _ready() -> void:
 	player_team = 1#randi_range(1,2)
+
+
 	init_Board()
-	#board =[[0,0,0,0,0,0,0],
-			#[0,0,0,0,0,0,0],
-			#[0,0,0,0,0,0,0],
-			#[0,0,0,0,1,0,0],
-			#[0,0,0,1,2,2,0],
-			#[0,0,1,2,1,1,0]]
-#	Debug the board
+
 	
 
 
-			
+
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		
 		
 		debug_board()
+
 		
 func init_Board():
 #	SETUP BOARD IN TERMINAL
@@ -89,12 +89,12 @@ func check_win_from_move(board, x, y):
 func count_in_direction(board, x, y, dx, dy, player):
 	var count = 1  # Include the starting position
 	# Check in the positive direction
-	count += count_one_direction(board, x, y, dx, dy, player)
+	count += count_one_direction( x, y, dx, dy, player)
 	# Check in the negative direction
-	count += count_one_direction(board, x, y, -dx, -dy, player)
+	count += count_one_direction( x, y, -dx, -dy, player)
 	return count
 
-func count_one_direction(board, x, y, dx, dy, player):
+func count_one_direction( x, y, dx, dy, player):
 	var count = 0
 	var nx = x + dx
 	var ny = y + dy
@@ -142,8 +142,21 @@ func _on_button_7_pressed() -> void:
 
 func _on_move_delay_timeout() -> void:
 	if player_team == 2: #Jeśli gracz to żółty, AI wykona ruch
+		#start_time = Time.get_ticks_msec()
 		var best_move = ai.find_best_move(board)
 		insert_Coin(best_move, 1)
+		#elapsedTime()
+
 	else:
+		#start_time = Time.get_ticks_msec()
 		var best_move = ai.find_best_move(board)
 		insert_Coin(best_move, 2)
+		#elapsedTime()
+		
+
+
+func elapsedTime():
+		time_now = Time.get_ticks_msec()
+		var duration = time_now - start_time
+		print(str(time_now)+", "+str(start_time))
+		print("Elapsed "+str(duration)+" ms")
