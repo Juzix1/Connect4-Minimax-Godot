@@ -15,6 +15,7 @@ var time_now
 
 func _ready() -> void:
 	player_team = 1#randi_range(1,2)
+	ai.setPlayers(player_team,2 if player_team==1 else 1)
 
 
 	init_Board()
@@ -65,7 +66,12 @@ func disable_all_buttons():
 	for child in hbox.get_children():
 		if child is Button:
 			child.disabled = true
-						
+
+func enable_all_buttons():
+	var hbox = $"../CanvasLayer/Control/HBoxContainer"
+	for child in hbox.get_children():
+		if child is Button:
+			child.disabled = false
 func check_win_from_move(board, x, y):
 	var player = board[y][x]
 	if player == 0:
@@ -112,6 +118,7 @@ func debug_board():
 func make_move(column):
 	insert_Coin(column,player_team)
 	%moveDelay.start()
+	disable_all_buttons()
 func _on_button_pressed() -> void:
 	make_move(0)
 
@@ -141,6 +148,7 @@ func _on_button_7_pressed() -> void:
 
 
 func _on_move_delay_timeout() -> void:
+	enable_all_buttons()
 	if player_team == 2: #Jeśli gracz to żółty, AI wykona ruch
 		#start_time = Time.get_ticks_msec()
 		var best_move = ai.find_best_move(board)

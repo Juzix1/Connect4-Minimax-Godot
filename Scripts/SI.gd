@@ -1,17 +1,19 @@
 extends Node
 
 const MAX_DEPTH: int = 5#Glebokosc rekursji w minimaxie
-const RED_PLAYER: int = 1
-const YELLOW_PLAYER: int = 2
+var AI_PLAYER: int
+var YELLOW_PLAYER: int
 const INF: int = 10000 #Pozytywna i negatywna nieskonczonosc
 
 #Ocena Planszy
 func evaluate_board_after_move(board,x,y,player) -> int:
 	if check_win_from_move(board,x,y) ==player:
-		if player == RED_PLAYER:
-			return 1000
+		if player == AI_PLAYER:
+			debug("detected PC win: gain 1000 points")
+			return 10000
 		else:
-			return -1000
+			debug("detected Player win: gain 1000 points")
+			return -10000
 	return evaluate_board(board)
 func evaluate_board(board):
 	var score:int = 0
@@ -19,8 +21,8 @@ func evaluate_board(board):
 	# Iteracja przez wszystkie możliwe pola
 	for y in range(6):
 		for x in range(7):
-			if board[y][x] == RED_PLAYER:
-				score += score_position(board, x, y, RED_PLAYER)
+			if board[y][x] == AI_PLAYER:
+				score += score_position(board, x, y, AI_PLAYER)
 			elif board[y][x] == YELLOW_PLAYER:
 				score -= score_position(board, x, y, YELLOW_PLAYER)
 	return score
@@ -40,7 +42,9 @@ func check_win_from_move(board,x,y)->int:
 	# Przeiteruj przez wszystkie kierunki
 	for direction in directions:
 		if count_in_direction(board, x, y, direction.x, direction.y, player) >= 4:
+			#debug("check_from_move:" +str(player))
 			return player  # Jeśli znaleziono zwycięstwo, zwróć identyfikator gracza
+	#debug("check_from_move:" +str(0))
 	return 0  # Brak zwycięzcy
 
 func score_position(board,x,y,player)->int:
@@ -79,29 +83,6 @@ func count_one_direction(board, x, y, dx, dy, player)->int:
 		ny += dy
 	return count
 
-#sprawdz czy gracz wygral
-func check_winner(board)->int:
-	# Sprawdzanie poziomych, pionowych i ukośnych linii
-	for y in range(6):
-		for x in range(7):
-			if board[y][x] != 0:  # Jeśli pole nie jest puste
-				# Sprawdzenie czterech kierunków
-				if check_direction(board, x, y, 1, 0, board[y][x]) or check_direction(board, x, y, 0, 1, board[y][x]) or check_direction(board, x, y, 1, 1, board[y][x]) or check_direction(board, x, y, 1, -1, board[y][x]):
-					return board[y][x]  # Zwrócenie zwycięzcy
-	return 0  # Brak zwycięzcy
-
-#Sprawdź czy są 4 coiny w rzędzie
-func check_direction(board,x,y,dx,dy,player)->int:
-	var count = 0
-	for i in range(4):
-		var nx = x + i * dx
-		var ny = y + i * dy
-		if nx >= 0 and nx < 7 and ny >= 0 and ny< 6 and board[ny][nx] == player:
-			count +=1
-		else:
-			break
-	return count==4
-
 #pokaz dostepne ruchy (tam gdzie nie ma jeszcze coinów)
 func get_valid_moves(board):
 	var valid_moves = []
@@ -114,15 +95,19 @@ func get_valid_moves(board):
 func minimax(board, depth, maximizing_player, alpha, beta, last_move)->int:
 	if depth == 0 or (last_move != null and check_win_from_move(board, last_move.x, last_move.y) != 0):
 		if last_move != null:
-			return evaluate_board_after_move(board, last_move.x, last_move.y, RED_PLAYER if maximizing_player else YELLOW_PLAYER)
+			return evaluate_board_after_move(board, last_move.x, last_move.y, AI_PLAYER if maximizing_player else YELLOW_PLAYER)
 		else:
 			return evaluate_board(board)
 
 	var valid_moves = get_valid_moves(board)
 	if maximizing_player:
 		var max_eval:int = -INF
+		debug("simulate PC move")
+		debug("Depth: "+str(depth))
 		for move in valid_moves:
-			make_move(board, move, RED_PLAYER)
+			
+			make_move(board, move, AI_PLAYER)
+			
 			var eval:int = minimax(board, depth - 1, false, alpha, beta, Vector2i(move, get_last_row(board,move)))
 			undo_move(board, move)
 			max_eval = max(max_eval, eval)
@@ -130,17 +115,23 @@ func minimax(board, depth, maximizing_player, alpha, beta, last_move)->int:
 			if beta <= alpha:
 				break
 		#debug_minimax_evaluation(move,depth,max_eval)
+		debug("maximal evaluation is "+str(max_eval))
 		return max_eval
 	else:
 		var min_eval:int = INF
+		debug("simulate Player move")
+		debug("Depth: "+str(depth))
 		for move in valid_moves:
+			debug("making move at "+str(move))
 			make_move(board, move, YELLOW_PLAYER)
 			var eval:int = minimax(board, depth - 1, true, alpha, beta, Vector2i(move,get_last_row(board, move)))
+			debug("unmaking move at "+str(move))
 			undo_move(board, move)
 			min_eval = min(min_eval, eval)
 			beta = min(beta, eval)
 			if beta <= alpha:
 				break
+		debug("minimal evaluation is "+str(min_eval))
 		return min_eval
 
 #wykonaj ruch
@@ -163,27 +154,31 @@ func find_best_move(board)->int:
 	var best_value:int = -INF
 	var valid_moves = get_valid_moves(board)
 	
+	debug("Starting Process of making best move")
+	
 	for move in valid_moves:
-		make_move(board,move, RED_PLAYER) #AI gra czerwonym
+		make_move(board,move, AI_PLAYER) #AI gra czerwonym
 		var row:int = get_last_row(board,move)
+		
 		var move_value:int = minimax(board, MAX_DEPTH-1,false,-INF,INF,Vector2i(move,row))
+		#debug("undo the virtual move in: "+str(move)+"column")
+		
 		undo_move(board, move)
 		if move_value > best_value:
 			best_value = move_value
 			best_move = move
+	debug("Best move is in column "+str(best_move+1))
 	return best_move
 			
-
-func debug_minimax_evaluation(depth, maximizing_player, move, eval, alpha, beta) -> void:
-	if maximizing_player:
-		print("Depth:", depth, "Player:", "RED (AI)")
-	else:
-		print("Depth:", depth, "Player:", "Yellow (Player)")
-	print("Move:", move, "Evaluation:", eval, "Alpha:", alpha, "Beta:", beta)
-	print("----------------------------")
-
 func get_last_row(board,column):
 	for y in range(6):
 		if board[y][column] != 0:
 			return y-1
 	return 5
+func setPlayers(AI,yellow):
+	AI_PLAYER=AI
+	YELLOW_PLAYER=yellow
+	
+func debug(message):
+	#print(message)
+	pass
