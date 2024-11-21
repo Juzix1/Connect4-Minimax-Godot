@@ -1,18 +1,22 @@
 extends Node
 
-const MAX_DEPTH: int = 5#Glebokosc rekursji w minimaxie
+const MAX_DEPTH: int = 4#Glebokosc rekursji w minimaxie
 var AI_PLAYER: int
 var YELLOW_PLAYER: int
 const INF: int = 10000 #Pozytywna i negatywna nieskonczonosc
+var file
+
+func createFile(newFile) -> void:
+	file = newFile
 
 #Ocena Planszy
 func evaluate_board_after_move(board,x,y,player) -> int:
 	if check_win_from_move(board,x,y) ==player:
 		if player == AI_PLAYER:
-			debug("detected PC win: gain 1000 points")
+			debug("detected PC win: gain 10000 points")
 			return 10000
 		else:
-			debug("detected Player win: gain 1000 points")
+			debug("detected Player win: gain -10000 points")
 			return -10000
 	return evaluate_board(board)
 func evaluate_board(board):
@@ -23,8 +27,11 @@ func evaluate_board(board):
 		for x in range(7):
 			if board[y][x] == AI_PLAYER:
 				score += score_position(board, x, y, AI_PLAYER)
+				debug("+"+str(score_position(board, x, y, AI_PLAYER))+" points")
 			elif board[y][x] == YELLOW_PLAYER:
 				score -= score_position(board, x, y, YELLOW_PLAYER)
+				debug("-"+str(score_position(board, x, y, YELLOW_PLAYER))+" points")
+	debug("Overall score is: "+str(score))
 	return score
 
 func check_win_from_move(board,x,y)->int:
@@ -59,10 +66,13 @@ func score_position(board,x,y,player)->int:
 		var count:int = count_in_direction(board, x, y, direction.x, direction.y, player)
 		if count == 2:
 			score += 5
+			#debug("Added 5 points")
 		elif count == 3:
 			score += 50
+			#debug("Added 50 points")
 		elif count == 4:
-			score += 1000  # Wygrana
+			score += 1000	# Wygrana
+			#debug("Added 1000 points")
 	return score
 
 func count_in_direction(board, x, y, dx, dy, player)->int:
@@ -102,35 +112,49 @@ func minimax(board, depth, maximizing_player, alpha, beta, last_move)->int:
 	var valid_moves = get_valid_moves(board)
 	if maximizing_player:
 		var max_eval:int = -INF
-		debug("simulate PC move")
+		debug("------------")
+		debug("\t simulate PC move")
 		debug("Depth: "+str(depth))
 		for move in valid_moves:
-			
+			debug("-- making move at "+str(move))
 			make_move(board, move, AI_PLAYER)
-			
 			var eval:int = minimax(board, depth - 1, false, alpha, beta, Vector2i(move, get_last_row(board,move)))
+			debug("Coming back to previous maximizing player")
+			debug("-- unmaking move at "+str(move))
 			undo_move(board, move)
 			max_eval = max(max_eval, eval)
+			debug("Max_eval: "+str(max_eval))
 			alpha = max(alpha, eval)
+			debug("Alpha: " + str(alpha))
+			debug("Beta: " + str(beta))
 			if beta <= alpha:
+				debug("Alpha greater than or equal beta, ending the move")
 				break
+			debug("------")
 		#debug_minimax_evaluation(move,depth,max_eval)
 		debug("maximal evaluation is "+str(max_eval))
 		return max_eval
 	else:
 		var min_eval:int = INF
-		debug("simulate Player move")
+		debug("------------")
+		debug("\t simulate Player move")
 		debug("Depth: "+str(depth))
 		for move in valid_moves:
-			debug("making move at "+str(move))
+			debug("-- making move at "+str(move))
 			make_move(board, move, YELLOW_PLAYER)
 			var eval:int = minimax(board, depth - 1, true, alpha, beta, Vector2i(move,get_last_row(board, move)))
+			debug("eval: "+str(eval))
 			debug("unmaking move at "+str(move))
 			undo_move(board, move)
 			min_eval = min(min_eval, eval)
+			debug("Min_eval: "+str(min_eval))
 			beta = min(beta, eval)
+			debug("Alpha: "+str(alpha))
+			debug("Beta: "+str(beta))
 			if beta <= alpha:
+				debug("Beta greater than or equal alpha, ending the move")
 				break
+			debug("------")
 		debug("minimal evaluation is "+str(min_eval))
 		return min_eval
 
@@ -158,9 +182,10 @@ func find_best_move(board)->int:
 	
 	for move in valid_moves:
 		make_move(board,move, AI_PLAYER) #AI gra czerwonym
+		debug("Making a real move")
 		var row:int = get_last_row(board,move)
 		
-		var move_value:int = minimax(board, MAX_DEPTH-1,false,-INF,INF,Vector2i(move,row))
+		var move_value:int = minimax(board, MAX_DEPTH,false,-INF,INF,Vector2i(move,row))
 		#debug("undo the virtual move in: "+str(move)+"column")
 		
 		undo_move(board, move)
@@ -180,5 +205,6 @@ func setPlayers(AI,yellow):
 	YELLOW_PLAYER=yellow
 	
 func debug(message):
-	#print(message)
-	pass
+	var result : String = message
+	file.store_string(result+"\n")
+	print(message)

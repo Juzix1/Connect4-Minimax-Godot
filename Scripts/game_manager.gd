@@ -16,8 +16,7 @@ var time_now
 func _ready() -> void:
 	player_team = 1#randi_range(1,2)
 	ai.setPlayers(player_team,2 if player_team==1 else 1)
-
-
+	ai.createFile(FileAccess.open("C://Users//call1//Documents//logs.txt", FileAccess.WRITE_READ))
 	init_Board()
 
 	
