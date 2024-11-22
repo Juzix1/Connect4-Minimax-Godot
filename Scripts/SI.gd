@@ -1,10 +1,11 @@
 extends Node
 
-const MAX_DEPTH: int = 4#Glebokosc rekursji w minimaxie
+const MAX_DEPTH: int = 5#Glebokosc rekursji w minimaxie
 var AI_PLAYER: int
 var YELLOW_PLAYER: int
 const INF: int = 10000 #Pozytywna i negatywna nieskonczonosc
 var file
+var save=false
 
 func createFile(newFile) -> void:
 	file = newFile
@@ -203,8 +204,11 @@ func get_last_row(board,column):
 func setPlayers(AI,yellow):
 	AI_PLAYER=AI
 	YELLOW_PLAYER=yellow
+func toggleSave():
+	save=not save
 	
 func debug(message):
-	var result : String = message
-	file.store_string(result+"\n")
-	print(message)
+	if save:
+		var result : String = message
+		file.store_string(result+"\n")
+		print(message)

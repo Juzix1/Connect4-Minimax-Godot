@@ -16,18 +16,19 @@ var time_now
 func _ready() -> void:
 	player_team = 1#randi_range(1,2)
 	ai.setPlayers(player_team,2 if player_team==1 else 1)
-	ai.createFile(FileAccess.open("C://Users//call1//Documents//logs.txt", FileAccess.WRITE_READ))
+	ai.createFile(FileAccess.open("user://logs/log.txt", FileAccess.WRITE_READ))
 	init_Board()
+
 
 	
 
 
 
 func _input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("ui_accept"):
+	if Input.is_action_just_pressed("debug"):
+		ai.toggleSave()
 		
-		
-		debug_board()
+		#debug_board()
 
 		
 func init_Board():
@@ -53,7 +54,7 @@ func insert_Coin(x, team):
 			debug_board()
 			break
 	
-	# Check for a win only if a valid move was made
+	## Check for a win only if a valid move was made
 	if inserted_row != -1:
 		if check_win_from_move(board, x, inserted_row) != 0:
 			print("Team " + str(check_win_from_move(board, x, inserted_row)) + " wins")
