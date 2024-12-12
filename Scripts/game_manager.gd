@@ -32,13 +32,33 @@ func _input(event: InputEvent) -> void:
 
 		
 func init_Board():
-#	SETUP BOARD IN TERMINAL
+	# Clear any existing board state
+	board.clear()
+	# Define a predefined board state
+	var predefined_board = [
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],  # Player 1 horizontal line
+		[2, 0, 0, 0, 0, 0, 0],  # Partial diagonal
+		[2, 0, 0, 0, 0, 0, 1],
+		[2, 0, 0, 0, 0, 0, 1],
+	]
+	
+	# Initialize the board and the TileMap based on the predefined state
 	for i in range(6):
 		board.append([])
 		for j in range(7):
-			board[i].append(0)
-			tilemap.set_cell(Vector2i(j,i),MAIN_SOURCE_ID,EMPTY_TOKEN)
-			
+			var cell_value = predefined_board[i][j]
+			board[i].append(cell_value)
+			# Set TileMap cell based on the token
+			if cell_value == 1:
+				tilemap.set_cell(Vector2i(j, i), MAIN_SOURCE_ID, RED_TOKEN)
+			elif cell_value == 2:
+				tilemap.set_cell(Vector2i(j, i), MAIN_SOURCE_ID, YELLOW_TOKEN)
+			else:
+				tilemap.set_cell(Vector2i(j, i), MAIN_SOURCE_ID, EMPTY_TOKEN)
+			debug_board()
+
 func insert_Coin(x, team):
 	var token
 	var inserted_row = -1  # Track the row where the coin is inserted

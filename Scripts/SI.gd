@@ -12,7 +12,7 @@ func createFile(newFile) -> void:
 
 #Ocena Planszy
 func evaluate_board_after_move(board,x,y,player) -> int:
-	if check_win_from_move(board,x,y) ==player:
+	if check_win_from_move(board,x,y) == player:
 		if player == AI_PLAYER:
 			debug("detected PC win: gain 10000 points")
 			return 10000
@@ -36,6 +36,13 @@ func evaluate_board(board):
 	return score
 
 func check_win_from_move(board,x,y)->int:
+	print(board[0])
+	print(board[1])
+	print(board[2])
+	print(board[3])
+	print(board[4])
+	print(board[5])
+	print(str(x)+"x "+str(y) + "y " + str(board[y][x]))
 	var player: int = board[y][x]
 	if player == 0:
 		return 0
@@ -112,6 +119,9 @@ func minimax(board, depth, maximizing_player, alpha, beta, last_move)->int:
 
 	var valid_moves = get_valid_moves(board)
 	if maximizing_player:
+		if check_win_from_move(board, last_move.x, last_move.y) == AI_PLAYER:
+			print("Gówno")
+			return 1000
 		var max_eval:int = -INF
 		debug("------------")
 		debug("\t simulate PC move")
@@ -183,6 +193,7 @@ func find_best_move(board)->int:
 	
 	for move in valid_moves:
 		make_move(board,move, AI_PLAYER) #AI gra czerwonym
+		print("move "+ str(move))
 		debug("Making a real move")
 		var row:int = get_last_row(board,move)
 		
@@ -199,7 +210,7 @@ func find_best_move(board)->int:
 func get_last_row(board,column):
 	for y in range(6):
 		if board[y][column] != 0:
-			return y-1
+			return y
 	return 5
 func setPlayers(AI,yellow):
 	AI_PLAYER=AI
