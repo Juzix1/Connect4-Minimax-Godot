@@ -12,12 +12,15 @@ func createFile(newFile) -> void:
 
 #Ocena Planszy
 func evaluate_board_after_move(board,x,y,player) -> int:
-	if check_win_from_move(board,x,y) == player:
+	var check = check_win_from_move(board,x,y) 
+	print("check " +str(check))
+	print("player "+str(player))
+	if check == player:
 		if player == AI_PLAYER:
-			debug("detected PC win: gain 10000 points")
+			print("detected PC win: gain 10000 points")
 			return 10000
-		else:
-			debug("detected Player win: gain -10000 points")
+		elif check == YELLOW_PLAYER:
+			print("detected Player win: gain -10000 points")
 			return -10000
 	return evaluate_board(board)
 func evaluate_board(board):
@@ -43,6 +46,27 @@ func check_win_from_move(board,x,y)->int:
 	print(board[4])
 	print(board[5])
 	print(str(x)+"x "+str(y) + "y " + str(board[y][x]))
+	var player: int = board[y][x]
+	if player == 0:
+		return 0
+
+	var directions = [
+		Vector2i(1, 0),   # Poziomo (prawo i lewo)
+		Vector2i(0, 1),   # Pionowo (góra i dół)
+		Vector2i(1, 1),   # Ukos (prawo-dół i lewo-góra)
+		Vector2i(1, -1)   # Ukos (prawo-góra i lewo-dół)
+	]
+
+	# Przeiteruj przez wszystkie kierunki
+	for direction in directions:
+		if count_in_direction(board, x, y, direction.x, direction.y, player) >= 4:
+			#debug("check_from_move:" +str(player))
+			return player  # Jeśli znaleziono zwycięstwo, zwróć identyfikator gracza
+	#debug("check_from_move:" +str(0))
+	return 0  # Brak zwycięzcy
+	
+func check_win_from_move2(board,x,y)->int:
+	
 	var player: int = board[y][x]
 	if player == 0:
 		return 0
@@ -111,17 +135,17 @@ func get_valid_moves(board):
 
 #Algorytm Minimax
 func minimax(board, depth, maximizing_player, alpha, beta, last_move)->int:
-	if depth == 0 or (last_move != null and check_win_from_move(board, last_move.x, last_move.y) != 0):
+	if depth == 0 or (last_move != null and check_win_from_move2(board, last_move.x, last_move.y) != 0):
 		if last_move != null:
 			return evaluate_board_after_move(board, last_move.x, last_move.y, AI_PLAYER if maximizing_player else YELLOW_PLAYER)
 		else:
 			return evaluate_board(board)
-
+	print("dupa")
 	var valid_moves = get_valid_moves(board)
 	if maximizing_player:
-		if check_win_from_move(board, last_move.x, last_move.y) == AI_PLAYER:
-			print("Gówno")
-			return 1000
+		#if check_win_from_move(board, last_move.x, last_move.y) == AI_PLAYER:
+			#print("Gówno")
+			#return 1000
 		var max_eval:int = -INF
 		debug("------------")
 		debug("\t simulate PC move")
@@ -198,6 +222,8 @@ func find_best_move(board)->int:
 		var row:int = get_last_row(board,move)
 		
 		var move_value:int = minimax(board, MAX_DEPTH,false,-INF,INF,Vector2i(move,row))
+		print("move_value "+str(move_value))
+		print("best_value "+str(best_value))
 		#debug("undo the virtual move in: "+str(move)+"column")
 		
 		undo_move(board, move)

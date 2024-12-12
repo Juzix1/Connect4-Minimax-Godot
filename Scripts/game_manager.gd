@@ -38,10 +38,10 @@ func init_Board():
 	var predefined_board = [
 		[0, 0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0],  # Player 1 horizontal line
-		[2, 0, 0, 0, 0, 0, 0],  # Partial diagonal
-		[2, 0, 0, 0, 0, 0, 1],
-		[2, 0, 0, 0, 0, 0, 1],
+		[0, 0, 0, 0, 0, 0, 0], 
+		[0, 0, 0, 0, 0, 0, 0], 
+		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0],
 	]
 	
 	# Initialize the board and the TileMap based on the predefined state
