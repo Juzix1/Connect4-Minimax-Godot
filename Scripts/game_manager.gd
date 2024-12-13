@@ -15,7 +15,7 @@ var time_now
 
 func _ready() -> void:
 	player_team = 1#randi_range(1,2)
-	ai.setPlayers(player_team,2 if player_team==1 else 1)
+	ai.setPlayers(2 if player_team==1 else 1,player_team)
 	ai.createFile(FileAccess.open("user://logs/log.txt", FileAccess.WRITE_READ))
 	init_Board()
 
@@ -40,8 +40,8 @@ func init_Board():
 		[0, 0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0, 0], 
 		[0, 0, 0, 0, 0, 0, 0], 
-		[0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 1, 2, 2, 0],
+		[0, 0, 1, 2, 1, 2, 0],
 	]
 	
 	# Initialize the board and the TileMap based on the predefined state

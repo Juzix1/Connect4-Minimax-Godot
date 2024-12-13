@@ -1,6 +1,6 @@
 extends Node
 
-const MAX_DEPTH: int = 5#Glebokosc rekursji w minimaxie
+const MAX_DEPTH: int = 4#Glebokosc rekursji w minimaxie
 var AI_PLAYER: int
 var YELLOW_PLAYER: int
 const INF: int = 10000 #Pozytywna i negatywna nieskonczonosc
@@ -13,15 +13,15 @@ func createFile(newFile) -> void:
 #Ocena Planszy
 func evaluate_board_after_move(board,x,y,player) -> int:
 	var check = check_win_from_move(board,x,y) 
-	print("check " +str(check))
-	print("player "+str(player))
+	debug("check " +str(check))
+	debug("player "+str(player))
 	if check == player:
 		if player == AI_PLAYER:
-			print("detected PC win: gain 10000 points")
-			return 10000
+			debug("detected PC win: gain 10000 points")
+			return INF
 		elif check == YELLOW_PLAYER:
-			print("detected Player win: gain -10000 points")
-			return -10000
+			debug("detected Player win: gain -10000 points")
+			return -INF
 	return evaluate_board(board)
 func evaluate_board(board):
 	var score:int = 0
@@ -39,13 +39,13 @@ func evaluate_board(board):
 	return score
 
 func check_win_from_move(board,x,y)->int:
-	print(board[0])
-	print(board[1])
-	print(board[2])
-	print(board[3])
-	print(board[4])
-	print(board[5])
-	print(str(x)+"x "+str(y) + "y " + str(board[y][x]))
+	debug(board[0])
+	debug(board[1])
+	debug(board[2])
+	debug(board[3])
+	debug(board[4])
+	debug(board[5])
+	debug(str(x)+"x "+str(y) + "y " + str(board[y][x]))
 	var player: int = board[y][x]
 	if player == 0:
 		return 0
@@ -134,63 +134,39 @@ func get_valid_moves(board):
 	return valid_moves
 
 #Algorytm Minimax
-func minimax(board, depth, maximizing_player, alpha, beta, last_move)->int:
+# Minimax function to simulate both AI and Player moves
+func minimax(board, depth, maximizing_player, alpha, beta, last_move) -> int:
 	if depth == 0 or (last_move != null and check_win_from_move2(board, last_move.x, last_move.y) != 0):
 		if last_move != null:
 			return evaluate_board_after_move(board, last_move.x, last_move.y, AI_PLAYER if maximizing_player else YELLOW_PLAYER)
 		else:
 			return evaluate_board(board)
-	print("dupa")
+	
 	var valid_moves = get_valid_moves(board)
+	
 	if maximizing_player:
-		#if check_win_from_move(board, last_move.x, last_move.y) == AI_PLAYER:
-			#print("Gówno")
-			#return 1000
-		var max_eval:int = -INF
-		debug("------------")
-		debug("\t simulate PC move")
-		debug("Depth: "+str(depth))
+		# AI's turn (maximizing player)
+		var max_eval = -INF
 		for move in valid_moves:
-			debug("-- making move at "+str(move))
 			make_move(board, move, AI_PLAYER)
-			var eval:int = minimax(board, depth - 1, false, alpha, beta, Vector2i(move, get_last_row(board,move)))
-			debug("Coming back to previous maximizing player")
-			debug("-- unmaking move at "+str(move))
+			var eval = minimax(board, depth - 1, false, alpha, beta, Vector2i(move, get_last_row(board, move)))
 			undo_move(board, move)
 			max_eval = max(max_eval, eval)
-			debug("Max_eval: "+str(max_eval))
 			alpha = max(alpha, eval)
-			debug("Alpha: " + str(alpha))
-			debug("Beta: " + str(beta))
 			if beta <= alpha:
-				debug("Alpha greater than or equal beta, ending the move")
 				break
-			debug("------")
-		#debug_minimax_evaluation(move,depth,max_eval)
-		debug("maximal evaluation is "+str(max_eval))
 		return max_eval
 	else:
-		var min_eval:int = INF
-		debug("------------")
-		debug("\t simulate Player move")
-		debug("Depth: "+str(depth))
+		# Player's turn (minimizing player)
+		var min_eval = INF
 		for move in valid_moves:
-			debug("-- making move at "+str(move))
 			make_move(board, move, YELLOW_PLAYER)
-			var eval:int = minimax(board, depth - 1, true, alpha, beta, Vector2i(move,get_last_row(board, move)))
-			debug("eval: "+str(eval))
-			debug("unmaking move at "+str(move))
+			var eval = minimax(board, depth - 1, true, alpha, beta, Vector2i(move, get_last_row(board, move)))
 			undo_move(board, move)
 			min_eval = min(min_eval, eval)
-			debug("Min_eval: "+str(min_eval))
 			beta = min(beta, eval)
-			debug("Alpha: "+str(alpha))
-			debug("Beta: "+str(beta))
 			if beta <= alpha:
-				debug("Beta greater than or equal alpha, ending the move")
 				break
-			debug("------")
-		debug("minimal evaluation is "+str(min_eval))
 		return min_eval
 
 #wykonaj ruch
@@ -217,13 +193,13 @@ func find_best_move(board)->int:
 	
 	for move in valid_moves:
 		make_move(board,move, AI_PLAYER) #AI gra czerwonym
-		print("move "+ str(move))
+		debug("move "+ str(move))
 		debug("Making a real move")
 		var row:int = get_last_row(board,move)
 		
 		var move_value:int = minimax(board, MAX_DEPTH,false,-INF,INF,Vector2i(move,row))
-		print("move_value "+str(move_value))
-		print("best_value "+str(best_value))
+		debug("move_value "+str(move_value))
+		debug("best_value "+str(best_value))
 		#debug("undo the virtual move in: "+str(move)+"column")
 		
 		undo_move(board, move)
