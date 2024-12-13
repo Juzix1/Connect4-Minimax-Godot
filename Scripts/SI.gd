@@ -39,12 +39,7 @@ func evaluate_board(board):
 	return score
 
 func check_win_from_move(board,x,y)->int:
-	debug(board[0])
-	debug(board[1])
-	debug(board[2])
-	debug(board[3])
-	debug(board[4])
-	debug(board[5])
+
 	debug(str(x)+"x "+str(y) + "y " + str(board[y][x]))
 	var player: int = board[y][x]
 	if player == 0:

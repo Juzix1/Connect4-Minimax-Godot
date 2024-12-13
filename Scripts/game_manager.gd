@@ -38,10 +38,10 @@ func init_Board():
 	var predefined_board = [
 		[0, 0, 0, 0, 0, 0, 0],
 		[0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0], 
-		[0, 0, 0, 0, 0, 0, 0], 
-		[0, 0, 0, 1, 2, 2, 0],
-		[0, 0, 1, 2, 1, 2, 0],
+		[0, 1, 0, 0, 0, 0, 0],
+		[1, 2, 0, 0, 0, 0, 0],
+		[1, 2, 0, 1, 1, 0, 1],
+		[1, 2, 1, 2, 2, 2, 1],
 	]
 	
 	# Initialize the board and the TileMap based on the predefined state
@@ -77,6 +77,11 @@ func insert_Coin(x, team):
 	## Check for a win only if a valid move was made
 	if inserted_row != -1:
 		if check_win_from_move(board, x, inserted_row) != 0:
+			if check_win_from_move(board, x, inserted_row)==2:
+				%WinLabel.text="You Lose"
+			else:
+				%WinLabel.text="You Win"
+			%WinLabel.show()
 			print("Team " + str(check_win_from_move(board, x, inserted_row)) + " wins")
 			disable_all_buttons()
 			%moveDelay.queue_free()
