@@ -83,6 +83,7 @@ The heuristic evaluates the board based on potential rows (2, 3, or 4 tokens). H
 
 ## Algorithm Execution Example
 **Board before move:**
+
 ![Board Example](docs/image1.png)
 - Available moves: columns 2, 6.
 
