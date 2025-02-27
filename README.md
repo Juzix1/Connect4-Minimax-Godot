@@ -3,6 +3,11 @@
 ## Overview
 This project implements the Minimax algorithm with Alpha-Beta Pruning to make optimal decisions in the game "Connect 4".
 
+## Authors
+[Kacper Jóźwiak](https://github.com/Juzix1)
+[Dawid Centkowski](https://github.com/Reayon)
+[Dariusz Skonieczny](https://github.com/Vinderwald)
+
 ## Table of Contents
 1. [Problem Description](#problem-description)
 2. [Decision-Making Process](#decision-making-process)
