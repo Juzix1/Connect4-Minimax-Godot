@@ -71,7 +71,7 @@ if β ≤ α, then prune this branch.
 ```
 ### Branch Search Formula
 $$
-f(\text{board}) = \sum_{x,y \in \text{board}} \text{score\_position}(\text{board}, x, y, \text{player})
+f(board) = ∑ score_position(board, x, y, player)   for (x, y) ∈ board
 $$
 
 
@@ -90,6 +90,7 @@ The heuristic evaluates the board based on potential rows (2, 3, or 4 tokens). H
 1. Executes the simulation and calls `minimax` for the human player.
 2. `minimax` analyzes possible responses, minimizing AI’s score.
 3. AI records the evaluation score for column 2.
+
 ![Board Example](docs/image2.png)
 
 ### AI Simulates Move in Column 6:
